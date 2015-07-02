@@ -1,0 +1,18 @@
+---
+- hosts: control
+  sudo: yes
+  sudo_user: rstarmer
+  tasks:
+  - name: format database disk /dev/sdb
+  	filesystem: fstype=xfs dev=/dev/sdb
+  - name: format gluster disk /dev/sdc
+  	filesystem: fstype=xfs dev=/dev/sdc
+  - name: make mnt directory /mnt/database
+  	file: path=/mnt/database owner=root group=root mode=0777 state=directory
+  - name: make mnt directory /mnt/gluster
+    file: path=/mnt/glance owner=root group=root mode=0777 state=directory
+  - name: mount database disk into /mnt/database
+    mount: name=/mnt/database src=/dev/sdb fstype=xfs state=present
+  - name: mount gluster disk into /mnt/gluster
+  	mount: name=/mnt/gluster src=/dev/sdc fstype=xfs state=present
+
