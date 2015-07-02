@@ -10,10 +10,10 @@
     filesystem: fstype=xfs dev=/dev/sdc
 
   - name: make mnt directory /mnt/database
-    file: path=/mnt/database owner=root group=root mode=0777 state=directory
+    file: path=/mnt/database owner=root group=root mode=0755 state=directory
 
   - name: make mnt directory /mnt/gluster
-    file: path=/mnt/gluster owner=root group=root mode=0777 state=directory
+    file: path=/mnt/gluster owner=root group=root mode=0755 state=directory
 
   - name: mount database disk into /mnt/database
     mount: name=/mnt/database src=/dev/sdb fstype=xfs state=mounted
