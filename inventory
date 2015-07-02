@@ -1,6 +1,6 @@
 [control]
-control01.parc.xerox.com
-control02.parc.xerox.com
+ucs-control01.parc.xerox.com
+ucs-control02.parc.xerox.com
 [compute]
-compute01.parc.xerox.com
-compute02.parc.xerox.com
+ucs-compute01.parc.xerox.com
+ucs-compute02.parc.xerox.com
