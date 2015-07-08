@@ -1,0 +1,14 @@
+---
+- hosts: control
+  sudo: yes
+  tasks:
+
+  # Ensure /etc/hosts is defined
+  - name: Ensure hostname is defined in /etc/hosts
+    template: 
+      src: ./roles/templates/hosts.j2
+      dest: /etc/hosts 
+      owner: root
+      group: root
+      mode: "u=rw,g=r,o=r"
+

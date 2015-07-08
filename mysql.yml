@@ -1,0 +1,77 @@
+---
+- hosts: control
+  sudo: yes
+  tasks:
+
+  - name: install MySQL-python
+    yum: name=MySQL-python state=present
+
+  - name: enable firewall service
+    service: name=firewalld enabled=yes state=started
+
+  - name: open mysql firewall port
+    firewalld: port=3306/tcp permanent=true immediate=true state=enabled
+
+  - name: add database replication configuration to /etc/my.cnf.d/replicate.cnf
+    copy:
+      dest: /etc/my.cnf.d/replicate.cnf
+      src: ./roles/templates/my.replicate.cnf.j2
+      owner: root
+      group: root
+      mode: "u=rw,g=r,o=r"
+
+  - name: comment out bind_address
+    lineinfile:
+      dest: /etc/my.cnf
+      regexp: 'bind_address'
+      line: '#bind_address={{ ansible_default_ipv4.address }}'
+      state: absent
+
+  - name: add replication user
+    mysql_user:
+      name: replicator
+      password: password
+      login_user: root
+      login_password: "7h!s!sApw"
+      host: "%"
+      priv: "*.*:REPLICATION SLAVE"
+      state: present
+
+  - name: add root access
+    mysql_user:
+      name: root
+      password: "7h!s!sApw"
+      login_user: root
+      login_password: "7h!s!sApw"
+      host: "%"
+      priv: "*.*:ALL,GRANT"
+      state: present
+
+- hosts: control[0]
+  sudo: yes
+  tasks:
+  - name: add mysql server-id
+    ini_file:
+      dest: /etc/my.cnf
+      section: mysqld
+      option: server-id
+      value: 101
+
+
+- hosts: control[1]
+  sudo: yes
+  tasks:
+  - name: add mysql server-id
+    ini_file:
+      dest: /etc/my.cnf
+      section: mysqld
+      option: server-id
+      value: 201
+
+- hosts: control
+  sudo: yes
+  tasks:
+  - name: restart_mariadb
+    service:
+      name: mariadb
+      state: restarted

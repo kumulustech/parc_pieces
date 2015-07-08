@@ -3,62 +3,54 @@
   sudo: yes
   tasks:
 
-  - name: get the latest gluster repo
-    command: wget -P /etc/yum.repos.d http://download.gluster.org/pub/gluster/glusterfs/LATEST/RHEL/glusterfs-epel.repo creates=/etc/yum.repos.d/glusterfs-epel.repo
+  - name: wget the proper repo
+    command: wget -P /etc/yum.repos.d http://download.gluster.org/pub/gluster/glusterfs/LATEST/RHEL/glusterfs-epel.repo
 
-  - name: ensure the epel-release package is installed
+  - name: install epel-release
     yum: name=epel-release state=present
 
-  - name: install userspace-rcu development package
+  - name: install gluster extra services
     yum: name=userspace-rcu-devel state=present
 
-  - name: install gluster server package
+  - name: install gluster server
     yum: name=glusterfs-server state=present
 
-  - name: configure glusterd service firewall rules
-    firewalld: port=24007-24009/tcp permanent=true immediate=true state=enabled
-
-  - name: configure glusterd brick firewall rules
-    firewalld: port=49152-49154/tcp permanent=true immediate=true state=enabled
-
-  - name: start the gluster server services
-    service: name=glusterd state=started
+  - service: name=glusterd state=started
 
 - hosts: control[0]
   sudo: yes
   tasks:
 
-  - name: probe gluster peer
-    command: gluster peer probe ucs-control02
+  - name: connect with peer
+    command: gluster peer probe {{ remote_addr }}
 
-  - name: create gluster volume glance
-    command: gluster volume create glance replica 2 transport tcp ucs-control01:/mnt/gluster ucs-control02:/mnt/gluster force creates=/mnt/gluster
+  - name: create gluster volume
+    command: gluster volume create volume1 replica 2 transport tcp {{ ansible_default_ipv4.address }}:/srv/gluster-storage {{ remote_addr }}:/srv/gluster-storage force creates=/srv/gluster-storage
     register: vol_result
 
   - name: start gluster volume
-    gluster_volume: state=started name=glance
+    gluster_volume: state=started name=volume1
     when: vol_result | success
 
 - hosts: control
   sudo: yes
   tasks:
 
-  - name: install glusterfs
+  - name: install gluster fs
     yum: name=glusterfs state=present
 
   - name: install gluster fuse
     yum: name=glusterfs-fuse state=present
 
   - name: make mnt directory
-    file: path=/mnt/glance state=directory owner=root group=root mode=0755
+    file: path=/mnt/storage-pool state=directory owner=root group=root mode=0775
 
-  # - name: add fstab entry for mount point
-  #   lineinfile:
-  #     dest: /etc/fstab
-  #     line: "{{ ansible_default_ipv4.address}}:glance /mnt/gluster-pool/ glusterfs defaults,_netdev 0 0"
+  - name: add fstab entry for mount point
+    lineinfile:
+      dest: /etc/fstab
+      line: "{{ ansible_default_ipv4.address}}:volume1 /mnt/storage-pool/ glusterfs defaults,_netdev 0 0"
 
-  # - name: run the mount command
-  #   command: mount -a
+  - name: run the mount command
+    command: mount -a
 
-  - name: mount gluster storage on gluster-pool
-    mount: name=/mnt/glance src="{{ansible_hostname}}:/glance" opts=defaults,_netdev fstype=glusterfs state=mounted
+#  - mount: name=/mnt/storage-pool src="{{ ansible_default_ipv4.address}}:/volume1"  fstype=glusterfs state=mounted

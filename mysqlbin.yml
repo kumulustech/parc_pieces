@@ -1,0 +1,75 @@
+---
+- hosts: control
+  sudo: yes
+  gather_facts: True
+
+
+- hosts: control[0]
+  sudo: yes
+  tasks:
+  - name: Get the current master servers replication status
+    mysql_replication:
+      mode: getmaster
+      login_user: root
+      login_password: '7h!s!sApw'
+    delegate_to: "{{ remote_float_addr }}"
+    register: repl_stat
+
+  - name: stop slave
+    mysql_replication:
+      mode: stopslave
+      login_user: root
+      login_password: '7h!s!sApw'
+
+  - name: Change the master in slave to start the replication
+    mysql_replication:
+      login_user: root
+      login_password: '7h!s!sApw'
+      mode: changemaster
+      master_host: "{{ remote_addr }}" 
+      master_log_file: "{{ repl_stat.File }}"
+      master_log_pos: "{{ repl_stat.Position }}"
+      master_user: replicator
+      master_password: password
+
+  - name: start slave
+    mysql_replication:
+      mode: startslave
+      login_user: root
+      login_password: '7h!s!sApw'
+
+
+- hosts: control[1]
+  sudo: yes
+  gather_facts: True
+  tasks:
+  - name: Get the current master servers replication status
+    mysql_replication:
+      mode: getmaster
+      login_user: root
+      login_password: '7h!s!sApw'
+    delegate_to: "{{ remote_float_addr }}"
+    register: repl_stat
+
+  - name: stop slave
+    mysql_replication:
+      mode: stopslave
+      login_user: root
+      login_password: '7h!s!sApw'
+
+  - name: Change the master in slave to start the replication
+    mysql_replication:
+      login_user: root
+      login_password: '7h!s!sApw'
+      mode: changemaster
+      master_host: "{{ remote_addr }}"
+      master_log_file: "{{ repl_stat.File }}"
+      master_log_pos: "{{ repl_stat.Position }}"
+      master_user: replicator
+      master_password: password
+
+  - name: start slave
+    mysql_replication:
+      mode: startslave
+      login_user: root
+      login_password: '7h!s!sApw'

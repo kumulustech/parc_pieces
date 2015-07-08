@@ -1,6 +1,6 @@
 [control]
-ucs-control01.parc.xerox.com
-ucs-control02.parc.xerox.com
+ucs-control01.parc.xerox.com remote_addr=13.7.188.51
+ucs-control02.parc.xerox.com remote_addr=13.7.188.52
 [compute]
 ucs-compute01.parc.xerox.com
 ucs-compute02.parc.xerox.com

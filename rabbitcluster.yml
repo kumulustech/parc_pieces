@@ -1,0 +1,51 @@
+---
+- hosts: control[0]
+  sudo: yes
+  tasks:
+
+  - name: open epmd firewall port
+    firewalld: port=4369/tcp permanent=true immediate=true state=enabled
+
+  - name: open rabbitmq dist firewall port
+    firewalld: port=25672/tcp permanent=true immediate=true state=enabled
+
+  - name: get rabbit erlang cookie
+    fetch: src=/var/lib/rabbitmq/.erlang.cookie dest=/tmp/ flat=yes
+
+  - name: restart rabbitmq service
+    service: name=rabbitmq-server state=restarted
+
+- hosts: control[1]
+  sudo: yes
+  tasks:
+
+  - name: open epmd firewall port
+    firewalld: port=4369/tcp permanent=true immediate=true state=enabled
+
+  - name: open rabbitmq dist firewall port
+    firewalld: port=25672/tcp permanent=true immediate=true state=enabled
+
+  - name: put rabbit erlang cookie
+    copy: src=/tmp/.erlang.cookie dest=/var/lib/rabbitmq/ owner=rabbitmq group=rabbitmq mode=0400
+
+  - name: restart rabbitmq service
+    service: name=rabbitmq-server state=restarted
+
+  - name: rabbitmq_clustering | config | stopping rabbitmq app
+    command: rabbitmqctl stop_app
+
+  - name: rabbitmq_clustering | config | resetting rabbitmq app
+    command: rabbitmqctl reset
+
+  - name: rabbitmq_clustering | config | joining rabbitmq cluster
+    command: rabbitmqctl join_cluster 'rabbit@{{ remote_name }}' 
+
+  - name: rabbitmq_clustering | config | starting rabbitmq app
+    command: rabbitmqctl start_app
+
+- hosts: control
+  sudo: yes
+  tasks:
+  - name: rabbitmq clustering policy
+    command: /sbin/rabbitmqctl -q -n rabbit set_policy -p / ha-all '^(?!amq\\.).*' '{"ha-mode"':' "all"}'
+

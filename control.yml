@@ -1,0 +1,10 @@
+---
+- hosts: control
+  sudo: yes
+  tasks:
+  - name: install dev packages
+    yum: name="@Development tools" state=present
+
+  - name: install wget
+    yum: name=wget state=present
+

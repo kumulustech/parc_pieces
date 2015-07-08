@@ -1,0 +1,85 @@
+---
+- hosts: control
+  sudo: yes
+  vars:
+    control1: ucs-control1
+    control1_ip: 13.7.188.52
+    control2: ucs-control2
+    control2_ip: 13.7.188.53
+    # ucs-proxy
+    shared_addr: 13.7.188.11
+
+  tasks:
+
+  - name: install keepalived
+    yum: name=keepalived state=present
+
+  - name: install haproxy
+    yum: name=haproxy state=present
+
+  - name: install haproxy cfg file
+    template:
+      src: ./roles/templates/haproxy.j2
+      dest: /etc/haproxy/haproxy.cfg
+      owner: root
+      group: root
+      mode: 0644
+
+- hosts: control[0]
+  sudo: yes
+  vars:
+    control1: ucs-control1
+    control1_ip: 13.7.188.52
+    control2: ucs-control2
+    control2_ip: 13.7.188.53
+    # ucs-proxy
+    shared_addr: 13.7.188.11
+    keepalive_priority: 110
+  tasks:
+
+  - name: install keeplaived.conf file
+    template:
+      src: ./roles/templates/vrrp.j2
+      dest: /etc/keepalived/keepalived.cfg
+
+- hosts: control[1]
+  sudo: yes
+  vars:
+    control1: ucs-control1
+    control1_ip: 13.7.188.52
+    control2: ucs-control2
+    control2_ip: 13.7.188.53
+    # ucs-proxy
+    shared_addr: 13.7.188.11
+    keepalive_priority: 120
+  tasks:
+
+  - name: install keeplaived.conf file
+    template:
+      src: ./roles/templates/vrrp.j2
+      dest: /etc/keepalived/keepalived.cfg
+
+- hosts: control
+  sudo: yes
+  vars:
+    control1: ucs-control1
+    control1_ip: 13.7.188.52
+    control2: ucs-control2
+    control2_ip: 13.7.188.53
+    # ucs-proxy
+    shared_addr: 13.7.188.11
+    keepalive_priority: 120
+  tasks:
+
+  - name: add sysctl to support bind addresses
+    lineinfile: dest=/etc/sysctl.conf line=net.ipv4.ip_nonlocal_bind
+
+  - name: reload sysctl
+    command: sysctl -p
+
+  - name: start keepalived
+    service: name=keepalived state=started
+
+  - name: start haproxy
+    service: name=haproxy state=started
+
