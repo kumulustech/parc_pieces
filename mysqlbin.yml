@@ -12,7 +12,7 @@
       mode: getmaster
       login_user: root
       login_password: '7h!s!sApw'
-    delegate_to: "{{ remote_float_addr }}"
+    delegate_to: "{{ remote_addr }}"
     register: repl_stat
 
   - name: stop slave
@@ -48,7 +48,7 @@
       mode: getmaster
       login_user: root
       login_password: '7h!s!sApw'
-    delegate_to: "{{ remote_float_addr }}"
+    delegate_to: "{{ remote_addr }}"
     register: repl_stat
 
   - name: stop slave

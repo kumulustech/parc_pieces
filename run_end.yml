@@ -1,0 +1,12 @@
+---
+- name: and here it begins
+  hosts: control
+
+- include: openstack_stop.yml
+- include: mysqldump.yml
+- include: mysql.yml
+- include: mysqlbin.yml
+- include: rabbitcluster.yml
+- include: fix_horizon.yml
+- include: httpd.yml
+- include: openstack_start.yml

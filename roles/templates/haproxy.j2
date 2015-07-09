@@ -8,6 +8,14 @@ defaults
     timeout client 10s
     timeout server 10s
 
+frontend horizon-vip
+    bind {{ shared_addr }}:80
+    default_backend horizon
+
+frontend horizion-svip
+    bind {{ shared_addr }}:443
+    default_backend horizons
+
 frontend keystone-admin-vip
     bind {{ shared_addr }}:35357
     default_backend keystone-admin-api
@@ -48,54 +56,62 @@ frontend sahara-vip
     bind {{ shared_addr }}:8386
     default_backend sahara-api
 
+backend horizon
+    balance roundrobin
+    server {{ control1 }} {{ control1_ip }}:80 check inter 10s
+    server {{ control2 }} {{ control2_ip }}:80 check inter 10s
+
+backend horizons
+    balance roundrobin
+    server {{ control1 }} {{ control1_ip }}:443 check inter 10s
+    server {{ control2 }} {{ control2_ip }}:443 check inter 10s
 
 backend keystone-admin-api
     balance roundrobin
     server {{ control1 }} {{ control1_ip }}:35357 check inter 10s
-    server {{ control2 }} {{ control1_ip }}:35357 check inter 10s
+    server {{ control2 }} {{ control2_ip }}:35357 check inter 10s
 
 backend keystone-public-api
     balance roundrobin
     server {{ control1 }} {{ control1_ip }}:5000 check inter 10s
-    server {{ control2 }} {{ control1_ip }}:5000 check inter 10s
+    server {{ control2 }} {{ control2_ip }}:5000 check inter 10s
 
 backend quantum-api
     balance roundrobin
     server {{ control1 }} {{ control1_ip }}:9696 check inter 10s
-    server {{ control2 }} {{ control1_ip }}:9696 check inter 10s
+    server {{ control2 }} {{ control2_ip }}:9696 check inter 10s
 
 backend glance-api
     balance roundrobin
     server {{ control1 }} {{ control1_ip }}:9191 check inter 10s
-    server {{ control2 }} {{ control1_ip }}:9191 check inter 10s
+    server {{ control2 }} {{ control2_ip }}:9191 check inter 10s
 
 backend glance-registry-api
     balance roundrobin
     server {{ control1 }} {{ control1_ip }}:9292 check inter 10s
-    server {{ control2 }} {{ control1_ip }}:9292 check inter 10s
+    server {{ control2 }} {{ control2_ip }}:9292 check inter 10s
 
 backend nova-ec2-api
     balance roundrobin
     server {{ control1 }} {{ control1_ip }}:8773 check inter 10s
-    server {{ control2 }} {{ control1_ip }}:8773 check inter 10s
+    server {{ control2 }} {{ control2_ip }}:8773 check inter 10s
 
 backend nova-compute-api
     balance roundrobin
     server {{ control1 }} {{ control1_ip }}:8774 check inter 10s
-    server {{ control2 }} {{ control1_ip }}:8774 check inter 10s
-    server mesa-virt-03 10.15.85.143:8774 check inter 10s
+    server {{ control2 }} {{ control2_ip }}:8774 check inter 10s
 
 backend nova-metadata-api
     balance roundrobin
     server {{ control1 }} {{ control1_ip }}:8775 check inter 10s
-    server {{ control2 }} {{ control1_ip }}:8775 check inter 10s
+    server {{ control2 }} {{ control2_ip }}:8775 check inter 10s
 
 backend cinder-api
     balance roundrobin
     server {{ control1 }} {{ control1_ip }}:8776 check inter 10s
-    server {{ control2 }} {{ control1_ip }}:8776 check inter 10s
+    server {{ control2 }} {{ control2_ip }}:8776 check inter 10s
 
 backend sahara-api
     balance roundrobin
     server {{ control1 }} {{ control1_ip }}:8386 check inter 10s
-    server {{ control2 }} {{ control1_ip }}:8386 check inter 10s
+    server {{ control2 }} {{ control2_ip }}:8386 check inter 10s

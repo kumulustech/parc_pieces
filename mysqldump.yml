@@ -6,9 +6,6 @@
   - name: install MySQL-python
     yum: name=MySQL-python state=present
 
-  - name: create root .my.cnf file with user and password information
-    template: src=./roles/templates/my.cnf.j2 dest=/root/.my.cnf owner=root group=root mode=0644
-
   - mysql_db:
       name: "{{ item.name }}"
       state: dump
