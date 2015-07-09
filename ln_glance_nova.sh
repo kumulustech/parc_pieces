@@ -2,9 +2,9 @@
 
 cd /var/lib
 mv glance glance.orig
-ln -s /mnt/storage-pool/glance glance
+ln -s /mnt/glance/glance glance
 #mv nova nova.orig
-#ln -s /mnt/storage-pool/nova nova
+#ln -s /mnt/glance/nova nova
 #rm -rf nova.orig glance.orig
 
-rm /mnt/storage-pool/migrated
+rm /mnt/glance/migrated
