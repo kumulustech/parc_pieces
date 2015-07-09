@@ -40,7 +40,7 @@
   - name: install keeplaived.conf file
     template:
       src: ./roles/templates/vrrp.j2
-      dest: /etc/keepalived/keepalived.cfg
+      dest: /etc/keepalived/keepalived.conf
 
 - hosts: control[1]
   sudo: yes
@@ -57,7 +57,7 @@
   - name: install keeplaived.conf file
     template:
       src: ./roles/templates/vrrp.j2
-      dest: /etc/keepalived/keepalived.cfg
+      dest: /etc/keepalived/keepalived.conf
 
 - hosts: control
   sudo: yes
@@ -81,8 +81,8 @@
     command: sysctl -p
 
   - name: start keepalived
-    service: name=keepalived state=started
+    service: name=keepalived state=restarted
 
   - name: start haproxy
-    service: name=haproxy state=started
+    service: name=haproxy state=restarted
 
