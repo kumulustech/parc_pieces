@@ -72,7 +72,7 @@
   tasks:
 
   - name: add sysctl to support bind addresses
-    lineinfile: dest=/etc/sysctl.conf line=net.ipv4.ip_nonlocal_bind
+    lineinfile: dest=/etc/sysctl.conf line='net.ipv4.ip_nonlocal_bind=1'
 
   - name: reload sysctl
     command: sysctl -p
