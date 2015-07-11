@@ -1,5 +1,5 @@
 ---
-- hosts: control[0]
+- hosts: control
   sudo: yes
   tasks:
 
@@ -8,6 +8,16 @@
 
   - name: open rabbitmq dist firewall port
     firewalld: port=25672/tcp permanent=true immediate=true state=enabled
+
+  - name: open rabbitmq port firewall port
+    firewalld: port=5672/tcp permanent=true immediate=true state=enabled
+
+  - name: open rabbitmq ssl firewall port
+    firewalld: port=5671/tcp permanent=true immediate=true state=enabled
+
+- hosts: control[0]
+  sudo: yes
+  tasks:
 
   - name: get rabbit erlang cookie
     fetch: src=/var/lib/rabbitmq/.erlang.cookie dest=/tmp/ flat=yes
@@ -18,12 +28,6 @@
 - hosts: control[1]
   sudo: yes
   tasks:
-
-  - name: open epmd firewall port
-    firewalld: port=4369/tcp permanent=true immediate=true state=enabled
-
-  - name: open rabbitmq dist firewall port
-    firewalld: port=25672/tcp permanent=true immediate=true state=enabled
 
   - name: put rabbit erlang cookie
     copy: src=/tmp/.erlang.cookie dest=/var/lib/rabbitmq/ owner=rabbitmq group=rabbitmq mode=0400

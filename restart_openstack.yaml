@@ -1,0 +1,6 @@
+---
+- hosts: all
+  sudo: yes
+  tasks:
+  - name: restart openstack services
+    command: openstack-service restart

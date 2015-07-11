@@ -1,0 +1,12 @@
+---
+- hosts: all
+  sudo: yes
+  vars:
+    physnet1: 'eth1'
+  tasks:
+
+  - name: create interface file from template for {{ physnet1 }}
+    template: src=./roles/templates/physnet1.j2 dest=/etc/sysconfig/network-scripts/ifcfg-{{physnet1}} mode 0755
+
+  - name: bring up interface {{physnet1}}
+    command: ifup {{physnet1}}

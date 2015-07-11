@@ -1,0 +1,76 @@
+---
+- hosts: control
+  sudo: yes
+  tasks:
+
+  - name: open nova firewall ports
+    firewalld: port=8773-8775/tcp permanent=true immediate=true state=enabled
+
+  - name: open cinder firewall ports
+    firewalld: port=8776/tcp permanent=true immediate=true state=enabled
+
+  - name: open VNC firewall ports
+    firewalld: port=6080-6082/tcp permanent=true immediate=true state=enabled
+
+  - name: open Sahara firewall ports
+    firewalld: port=8386/tcp permanent=true immediate=true state=enabled
+
+  - name: open Identity firewall ports
+    firewalld: port=35357/tcp permanent=true immediate=true state=enabled
+
+  - name: open Authorization firewall ports
+    firewalld: port=5000/tcp permanent=true immediate=true state=enabled
+
+  - name: open glance firewall ports
+    firewalld: port=9292/tcp permanent=true immediate=true state=enabled
+
+  - name: open glance registry firewall ports
+    firewalld: port=9191/tcp permanent=true immediate=true state=enabled
+
+  - name: open neutron firewall ports
+    firewalld: port=9696/tcp permanent=true immediate=true state=enabled
+
+  - name: open swift firewall ports
+    firewalld: port=6000-6002/tcp permanent=true immediate=true state=enabled
+
+  - name: open heat firewall ports
+    firewalld: port=8004/tcp permanent=true immediate=true state=enabled
+
+  - name: open cfn firewall ports
+    firewalld: port=8000/tcp permanent=true immediate=true state=enabled
+
+  - name: open cloudwatch firewall ports
+    firewalld: port=8003/tcp permanent=true immediate=true state=enabled
+
+  - name: open ceilometer firewall ports
+    firewalld: port=8773/tcp permanent=true immediate=true state=enabled
+
+## Other Non-OS service ports
+
+  - name: open HTTP firewall ports
+    firewalld: port=80/tcp permanent=true immediate=true state=enabled
+
+  - name: open HTTP Alt. firewall ports
+    firewalld: port=8080/tcp permanent=true immediate=true state=enabled
+
+  - name: open HTTPS firewall ports
+    firewalld: port=443/tcp permanent=true immediate=true state=enabled
+
+  - name: open rsync firewall ports
+    firewalld: port=873/tcp permanent=true immediate=true state=enabled
+
+  - name: open iSCSI firewall ports
+    firewalld: port=3260/tcp permanent=true immediate=true state=enabled
+
+  - name: open MySQL firewall ports
+    firewalld: port=3306/tcp permanent=true immediate=true state=enabled
+
+  - name: open Rabbit firewall ports
+    firewalld: port=5672/tcp permanent=true immediate=true state=enabled
+
+  - name: open Rabbit SSL firewall ports
+    firewalld: port=5671/tcp permanent=true immediate=true state=enabled
+
+
+
+
