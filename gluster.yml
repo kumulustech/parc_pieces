@@ -15,6 +15,12 @@
   - name: install gluster server package
     yum: name=glusterfs-server state=present
 
+  - name: install firewalld package
+    yum: name=firewalld state=present
+
+  - name: ensure firewalld is running
+    service: name=firewalld state=running
+
   - name: configure glusterd service firewall rules
     firewalld: port=24007-24009/tcp permanent=true immediate=true state=enabled
 
