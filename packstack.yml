@@ -44,8 +44,13 @@
   - name: install packstack tools
     yum: name=openstack-packstack state=present
 
-  - name: update packstack answer file
+  - name: update packstack answer file on ucs-control01
     template: src=./roles/templates/packstack.j2 dest=/root/packstack.txt
+    when: ansible_hostname == ucs-control01
+
+  - name: update packstack answer file on ucs-control02
+    template: src=./roles/templates/packstack_alt.j2 dest=/root/packstack.txt
+    when: ansible_hostname == ucs-control02
 
   - name: upload certificate 
     copy: src=./roles/certs/17030960.crt dest=/etc/pki/tls/certs/17030960.crt

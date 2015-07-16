@@ -1,0 +1,15 @@
+- hosts: control
+  sudo: yes
+  vars:
+    password: '7h!s!sApw'
+    proxy_ip: 13.7.188.11
+  tasks:
+
+  - name: update packstack answer file on ucs-control01
+    template: src=./roles/templates/packstack.j2 dest=/root/packstack.txt
+    when: ansible_hostname == "ucs-control01"
+
+  - name: update packstack answer file on ucs-control02
+    template: src=./roles/templates/packstack.j2 dest=/root/packstack.txt
+    when: ansible_hostname == "ucs-control02"
+

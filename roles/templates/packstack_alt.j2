@@ -28,7 +28,6 @@ CONFIG_NOVA_INSTALL=y
 
 # Specify 'y' to install OpenStack Networking (neutron); otherwise,
 # Compute Networking (nova) will be used. ['y', 'n']
-
 CONFIG_NEUTRON_INSTALL=y
 
 # Specify 'y' to install OpenStack Dashboard (horizon). ['y', 'n']
@@ -81,10 +80,11 @@ CONFIG_DEBUG_MODE=n
 # IP address of the server on which to install OpenStack services
 # specific to the controller role (for example, API servers or
 # dashboard).
-CONFIG_CONTROLLER_HOST= {{ proxy_ip }}
+# CONFIG_CONTROLLER_HOST={{ ansible_eth0.ipv4.address }}
+CONFIG_CONTROLLER_HOST={{ proxy_ip }}
 # List of IP addresses of the servers on which to install the Compute
 # service.
-CONFIG_COMPUTE_HOSTS={%- for id in range(55,67) -%}13.7.188.{{ id }}, {%- endfor -%} 13.7.188.67
+CONFIG_COMPUTE_HOSTS=
 
 # List of IP addresses of the server on which to install the network
 # service such as Compute networking (nova network) or OpenStack
@@ -116,8 +116,8 @@ CONFIG_VCENTER_CLUSTER_NAME=
 # (Unsupported!) IP address of the server on which to install
 # OpenStack services specific to storage servers such as Image or
 # Block Storage services.
+# CONFIG_STORAGE_HOST={{ ansible_eth0.ipv4.address }}
 CONFIG_STORAGE_HOST={{ proxy_ip }}
-
 # (Unsupported!) IP address of the server on which to install
 # OpenStack services specific to OpenStack Data Processing (sahara).
 CONFIG_SAHARA_HOST={{ proxy_ip }}
@@ -203,7 +203,7 @@ CONFIG_SATELLITE_PROXY_PW={{ password }}
 CONFIG_AMQP_BACKEND=rabbitmq
 
 # IP address of the server on which to install the AMQP service.
-CONFIG_AMQP_HOST={{ ansible_eth0.ipv4.address }}
+CONFIG_AMQP_HOST={{ proxy_ip }}
 
 # Specify 'y' to enable SSL for the AMQP service. ['y', 'n']
 CONFIG_AMQP_ENABLE_SSL=y
